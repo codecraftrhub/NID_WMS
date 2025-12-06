@@ -1,7 +1,6 @@
 name: nid-wms-full-stack
 services:
 - name: api
-  source_dir: wms_android.api
   github:
     repo: dot-contracts/NID_WMS
     branch: master
@@ -34,7 +33,6 @@ services:
   routes:
   - path: /api
 - name: web
-  source_dir: wms_web.dispatch.react
   github:
     repo: dot-contracts/NID_WMS
     branch: master

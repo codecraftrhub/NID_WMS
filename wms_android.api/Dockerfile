@@ -10,8 +10,13 @@ WORKDIR /src
 
 # Copy project files first for better layer caching
 # Build context is at the repo root (WMS_Android), so paths are relative to that
+RUN echo "=== Starting build process ===" && \
+    echo "Working directory: $(pwd)"
 COPY ["wms_android.api/wms_android.api.csproj", "wms_android.api/"]
 COPY ["wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
+RUN echo "=== Project files copied ===" && \
+    ls -la /src/wms_android.api/ && \
+    ls -la /src/wms_android.shared/
 
 # Set working directory and restore with optimizations
 WORKDIR /src/wms_android.api
@@ -27,9 +32,15 @@ RUN echo "=== Restoring NuGet packages ===" && \
 # Copy source code
 WORKDIR /src
 RUN echo "=== Copying source files ===" && \
-    ls -la /src || echo "Source directory listing failed"
+    echo "Files before copy:" && ls -la /src || echo "Source directory listing failed"
 COPY ["wms_android.api/", "wms_android.api/"]
 COPY ["wms_android.shared/", "wms_android.shared/"]
+RUN echo "=== Files after copy ===" && \
+    ls -la /src && \
+    echo "=== API project files ===" && \
+    ls -la /src/wms_android.api/ | head -20 && \
+    echo "=== Shared project files ===" && \
+    ls -la /src/wms_android.shared/ | head -20
 
 # Build and publish in one step to avoid file missing issues
 WORKDIR /src/wms_android.api
