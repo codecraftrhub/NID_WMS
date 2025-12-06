@@ -12,10 +12,10 @@
     <Nullable>enable</Nullable>
 
     <!-- Display name -->
-    <ApplicationTitle>Ficma WMS</ApplicationTitle>
+    <ApplicationTitle>NID Logistics</ApplicationTitle>
 
     <!-- App Identifier -->
-    <ApplicationId>com.ficma.wms</ApplicationId>
+    <ApplicationId>com.nidlogistics.wms</ApplicationId>
 
     <!-- Versions -->
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>

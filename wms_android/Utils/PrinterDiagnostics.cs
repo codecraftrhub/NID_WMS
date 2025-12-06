@@ -283,7 +283,7 @@ namespace wms_android.Utils
                     // QR code
                     vPrinter.PrintSetAlign(1);
                     vPrinter.PrintStr("--- QR Code Test ---\n");
-                    vPrinter.PrintQrCode_Cut("https://ficmalogistics.com", 200, 200, "QR_CODE");
+                    vPrinter.PrintQrCode_Cut("https://nidlogistics.co.ke", 200, 200, "QR_CODE");
                     
                     // Feed paper
                     vPrinter.PrintFeedPaper(100);
@@ -348,7 +348,7 @@ namespace wms_android.Utils
                     // QR code
                     cs30Printer.PrintSetAlign(1);
                     cs30Printer.PrintStr("--- QR Code Test ---\n");
-                    cs30Printer.PrintQrCode("https://ficmalogistics.com", 200, 200); // CS30 uses 3-parameter method
+                    cs30Printer.PrintQrCode("https://nidlogistics.co.ke", 200, 200); // CS30 uses 3-parameter method
                     
                     // Feed paper
                     cs30Printer.PrintFeedPaper(100);

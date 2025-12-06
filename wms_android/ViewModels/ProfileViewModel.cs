@@ -89,7 +89,7 @@ namespace wms_android.ViewModels
                     // Set email - check if user has email, otherwise generate from username
                     Email = !string.IsNullOrEmpty(user.Email) 
                         ? user.Email 
-                        : $"{Username.ToLower()}@ficmahome.co.ke";
+                        : $"{Username.ToLower()}@nidlogistics.co.ke";
 
                     Debug.WriteLine($"ProfileViewModel: Successfully loaded profile for {Username}");
                 }

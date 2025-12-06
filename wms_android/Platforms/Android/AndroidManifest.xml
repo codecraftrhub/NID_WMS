@@ -27,7 +27,7 @@
         android:icon="@mipmap/appicon"
         android:supportsRtl="true"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:label="Ficma WMS">
+        android:label="NID Logistics">
 
 		<!-- Declare the broadcast receiver inside the application -->
 		<receiver android:name=".ScanResultReceiver" android:exported="true">

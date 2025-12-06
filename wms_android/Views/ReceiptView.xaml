@@ -9,8 +9,8 @@
             <!-- Header -->
             <Frame Padding="15" BorderColor="#CCC" CornerRadius="5" Margin="0,0,0,15">
                 <VerticalStackLayout Spacing="5">
-                    <Label Text="Ficma Home Logistics" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" />
-                    <Label Text="0707136852 / ficmahomelogistics19@gmail.com" FontSize="Small" HorizontalOptions="Center" />
+                    <Label Text="NID Logistics" FontSize="Large" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label Text="0707136852 / info@nidlogistics.co.ke" FontSize="Small" HorizontalOptions="Center" />
                     <BoxView HeightRequest="1" Color="#CCC" Margin="0,5"/>
                     <Label Text="WAYBILL RECEIPT" FontSize="Medium" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,5,0,0"/>
                 </VerticalStackLayout>
