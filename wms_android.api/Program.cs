@@ -142,6 +142,15 @@ public class Program
             }
         }
 
+        // Configure path base for DigitalOcean routing
+        // DigitalOcean routes /api/* to this service, so we need to handle the /api prefix
+        var pathBase = builder.Configuration["PathBase"] ?? "/api";
+        if (!string.IsNullOrEmpty(pathBase) && pathBase != "/")
+        {
+            app.UsePathBase(pathBase);
+            Console.WriteLine($"Using path base: {pathBase}");
+        }
+
         // Configure the HTTP request pipeline
         // Enable Swagger in all environments for API documentation
         app.UseSwagger(c =>
