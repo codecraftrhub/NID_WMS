@@ -9,8 +9,8 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
 # Copy only project files first for better layer caching
-COPY ["wms_android.api/wms_android.api.csproj", "wms_android.api/"]
-COPY ["wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
+COPY ["wms_android.api.csproj", "wms_android.api/"]
+COPY ["../wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
 
 # Set working directory and restore with optimizations
 WORKDIR /src/wms_android.api
@@ -24,8 +24,8 @@ RUN dotnet nuget locals all --clear && \
 
 # Copy source code (only what we need)
 WORKDIR /src
-COPY ["wms_android.api/", "wms_android.api/"]
-COPY ["wms_android.shared/", "wms_android.shared/"]
+COPY ["./", "wms_android.api/"]
+COPY ["../wms_android.shared/", "wms_android.shared/"]
 
 # Build and publish in one step to avoid file missing issues
 WORKDIR /src/wms_android.api
