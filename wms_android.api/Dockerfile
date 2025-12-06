@@ -9,11 +9,16 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
 # Copy project files first for better layer caching
-# Build context is now at wms_android.api folder
+# Build context is at wms_android.api folder - need to copy shared project here
 RUN echo "=== Starting build process ===" && \
     echo "Working directory: $(pwd)"
+
+# Copy the API project file
 COPY ["wms_android.api.csproj", "wms_android.api/"]
-COPY ["../wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
+
+# Copy shared project from parent directory into our build context
+COPY ["../wms_android.shared/", "wms_android.shared/"]
+
 RUN echo "=== Project files copied ===" && \
     ls -la /src/wms_android.api/ && \
     ls -la /src/wms_android.shared/
@@ -33,8 +38,17 @@ RUN echo "=== Restoring NuGet packages ===" && \
 WORKDIR /src
 RUN echo "=== Copying source files ===" && \
     echo "Files before copy:" && ls -la /src || echo "Source directory listing failed"
+
+# Copy API project source (current directory in build context)
 COPY [".", "wms_android.api/"]
-COPY ["../wms_android.shared/", "wms_android.shared/"]
+
+# Shared project was already copied above
+
+# The project reference should already work since we copied shared to /src/wms_android.shared
+# and API is in /src/wms_android.api, so ../wms_android.shared/wms_android.shared.csproj is correct
+RUN echo "=== Checking project references ===" && \
+    cd /src/wms_android.api && \
+    cat wms_android.api.csproj | grep ProjectReference
 RUN echo "=== Files after copy ===" && \
     ls -la /src && \
     echo "=== API project files ===" && \
