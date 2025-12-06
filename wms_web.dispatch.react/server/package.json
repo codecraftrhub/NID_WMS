@@ -1,7 +1,7 @@
 {
-  "name": "wms-dispatch-server",
+  "name": "nid-logistics-dispatch-server",
   "version": "1.0.0",
-  "description": "Dispatch web application backend",
+  "description": "NID Logistics Dispatch web application backend",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

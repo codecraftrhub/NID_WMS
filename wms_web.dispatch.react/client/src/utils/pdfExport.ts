@@ -33,7 +33,7 @@ export const exportParcelsToPDF = (parcels: Parcel[], options: ExportOptions = {
   // Add company info
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
-  doc.text('WMS Dispatch System', 14, 30);
+  doc.text('NID Logistics Dispatch System', 14, 30);
   
   // Add export date
   const exportDate = new Date().toLocaleDateString('en-US', {

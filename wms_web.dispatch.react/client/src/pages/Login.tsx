@@ -75,7 +75,7 @@ const Login: React.FC = () => {
                 <Package className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">WMS Dispatch</h1>
+                <h1 className="text-2xl font-bold text-white">NID Logistics Dispatch</h1>
                 <p className="text-brand-100 text-sm">Warehouse Management System</p>
               </div>
             </div>
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
                 <Package className="w-9 h-9 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">WMS Dispatch</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">NID Logistics Dispatch</h1>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">Warehouse Management System</p>
               </div>
             </div>
@@ -196,7 +196,7 @@ const Login: React.FC = () => {
             {/* Footer */}
             <div className="mt-8 text-center">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                © 2024 WMS Dispatch. All rights reserved.
+                © 2024 NID Logistics. All rights reserved.
               </p>
             </div>
           </div>

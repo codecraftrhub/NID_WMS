@@ -1780,7 +1780,7 @@ const Reports: React.FC = () => {
             </table>
 
             <div class="footer">
-              <p>Generated on ${new Date().toLocaleString()} | WMS Branch Debit System</p>
+              <p>Generated on ${new Date().toLocaleString()} | NID Logistics Branch Management System</p>
               <p>Total Transactions: ${branchSummary.transactions.length}</p>
             </div>
           </body>
@@ -1969,7 +1969,7 @@ const Reports: React.FC = () => {
             </table>
 
             <div class="footer">
-              <p>Generated on ${new Date().toLocaleString()} | WMS Clerk Debit Management System</p>
+              <p>Generated on ${new Date().toLocaleString()} | NID Logistics Clerk Management System</p>
               <p>Total Transactions: ${clerkData.transactions.length} | Parcel Count: ${clerkData.parcelCount}</p>
             </div>
           </body>

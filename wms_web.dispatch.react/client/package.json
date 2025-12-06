@@ -1,5 +1,5 @@
 {
-  "name": "wms-dispatch-client",
+  "name": "nid-logistics-dispatch-client",
   "version": "0.1.0",
   "private": true,
   "proxy": "https://wmsandroidapi-w74du.ondigitalocean.app",

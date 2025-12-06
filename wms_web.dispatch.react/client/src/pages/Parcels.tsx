@@ -354,7 +354,7 @@ const Parcels: React.FC = () => {
       <body>
         <div class="receipt">
           <!-- Header -->
-          <div class="center bold large">FICMA HOME LOGISTICS</div>
+          <div class="center bold large">NID LOGISTICS</div>
           <div class="center small">Reliable Delivery Solutions</div>
           <div class="divider"></div>
           

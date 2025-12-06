@@ -446,8 +446,8 @@ const DispatchList: React.FC = () => {
             </head>
             <body>
               <div class="header">
-                <h1>LOGISTICS DISPATCH NOTE</h1>
-                <h2>WMS DISPATCH SYSTEM</h2>
+                <h1>NID LOGISTICS DISPATCH NOTE</h1>
+                <h2>DISPATCH MANAGEMENT SYSTEM</h2>
               </div>
               
               <div class="info-grid">
