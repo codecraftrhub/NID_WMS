@@ -143,11 +143,19 @@ public class Program
         }
 
         // Configure the HTTP request pipeline
-        if (app.Environment.IsDevelopment())
+        // Enable Swagger in all environments for API documentation
+        app.UseSwagger(c =>
         {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+            c.RouteTemplate = "swagger/{documentName}/swagger.json";
+        });
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "WMS Android API v1");
+            c.RoutePrefix = "swagger";
+            // Enable deep linking and persist authorization
+            c.EnableDeepLinking();
+            c.EnablePersistAuthorization();
+        });
 
         // Middleware pipeline
         app.UseHttpsRedirection();
