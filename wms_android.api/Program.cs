@@ -14,6 +14,7 @@ using wms_android.shared.Services;
 using Microsoft.Extensions.Options;
 using wms_android.api.Services;
 using wms_android.api.Interfaces;
+using System.Linq;
 public class Program
 {
     public static void Main(string[] args)
@@ -77,7 +78,14 @@ public class Program
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString, npgsqlOptions =>
+            {
+                npgsqlOptions.MigrationsAssembly("wms_android.api");
+                npgsqlOptions.EnableRetryOnFailure(
+                    maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    errorCodesToAdd: null);
+            }));
 
         // Add Health Checks with the explicit connection string
         builder.Services.AddHealthChecks()
@@ -134,6 +142,20 @@ public class Program
             try
             {
                 logger.LogInformation("Attempting to connect to database and apply migrations...");
+                
+                // Check if database exists and can be connected to
+                var canConnect = dbContext.Database.CanConnect();
+                logger.LogInformation($"Database can connect: {canConnect}");
+                
+                // Get pending migrations
+                var pendingMigrations = dbContext.Database.GetPendingMigrations().ToList();
+                logger.LogInformation($"Pending migrations: {pendingMigrations.Count}");
+                if (pendingMigrations.Any())
+                {
+                    logger.LogInformation($"Migrations to apply: {string.Join(", ", pendingMigrations)}");
+                }
+                
+                // Apply migrations
                 dbContext.Database.Migrate();
                 logger.LogInformation("Database migration completed successfully");
             }
@@ -141,11 +163,10 @@ public class Program
             {
                 logger.LogError(ex, "An error occurred while migrating the database. Error: {Message}", ex.Message);
                 logger.LogError("Stack trace: {StackTrace}", ex.StackTrace);
-                // Don't throw in production to allow app to start even if migrations fail
-                if (app.Environment.IsDevelopment())
-                {
-                    throw;
-                }
+                // In production, we should still throw to prevent app from starting with incomplete database
+                // This ensures we catch migration issues early
+                logger.LogCritical("CRITICAL: Database migration failed. Application cannot continue without proper database schema.");
+                throw; // Re-throw to prevent app from starting with broken database
             }
         }
 
