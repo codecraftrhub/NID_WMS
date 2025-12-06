@@ -29,13 +29,14 @@ namespace wms_android.shared.Services
             _httpClient = new HttpClient();
             _parcelService = parcelService;
             
+            // TODO: SMS functionality temporarily disabled - no sender ID for NID Logistics
             // Load the SMS API credentials from app settings
-            _server = "https://smsportal.hostpinnacle.co.ke/SMSApi/send";
-            _userId = "ficmahome";
-            _password = "QjfNg17q";
-            _senderName = "Ficma_Home";
+            // _server = "https://smsportal.hostpinnacle.co.ke/SMSApi/send";
+            // _userId = "ficmahome";  // Old Ficma credentials - need new NID sender ID
+            // _password = "QjfNg17q";
+            // _senderName = "Ficma_Home";
             
-            Debug.WriteLine("SMS Service initialized");
+            Debug.WriteLine("SMS Service initialized (SMS functionality disabled - no sender ID)");
         }
 
         /// <summary>
@@ -43,6 +44,12 @@ namespace wms_android.shared.Services
         /// </summary>
         public async Task<bool> SendSmsAsync(string phoneNumber, string message)
         {
+            // TODO: SMS functionality temporarily disabled - no sender ID for NID Logistics
+            Debug.WriteLine($"SMS disabled: Would send to {phoneNumber} - {message}");
+            Debug.WriteLine("SMS functionality is currently disabled. Need to configure sender ID for NID Logistics.");
+            return await Task.FromResult(false); // Return false since SMS is disabled
+            
+            /* SMS functionality temporarily commented out - need new sender ID for NID Logistics
             try
             {
                 Debug.WriteLine($"Attempting to send SMS to {phoneNumber}");
@@ -113,6 +120,7 @@ namespace wms_android.shared.Services
                 }
                 return false;
             }
+            */ // End of commented out SMS functionality
         }
         
         /// <summary>
@@ -474,12 +482,18 @@ namespace wms_android.shared.Services
             string paymentMethod,
             string waybillNumber)
         {
+            // TODO: SMS functionality temporarily disabled - no sender ID for NID Logistics
+            Debug.WriteLine("SMS disabled: Parcel pickup notification not sent (no sender ID configured)");
+            return await Task.FromResult(false);
+            
+            /* SMS functionality temporarily commented out
             // Format a nice SMS message with the parcel details
             var message = $"Dear {receiverName}, you have {quantity} parcel(s) sent by {senderName} ({senderPhone}) to {destination}. " +
                           $"Amount: KES {amount}. Payment Method: {paymentMethod}. Tracking: {waybillNumber}. " +
                           $"For inquiries call 0707 111 111. Thank you for choosing Ficma.";
             
             return await SendSmsAsync(receiverPhone, message);
+            */ // End of commented out pickup notification
         }
         
         /// <summary>
@@ -489,6 +503,11 @@ namespace wms_android.shared.Services
         /// <returns>True if message was sent successfully, false otherwise</returns>
         public async Task<bool> SendTemplatedParcelNotificationAsync(Parcel parcel)
         {
+            // TODO: SMS functionality temporarily disabled - no sender ID for NID Logistics
+            Debug.WriteLine("SMS disabled: Templated parcel notification not sent (no sender ID configured)");
+            return await Task.FromResult(false);
+            
+            /* SMS functionality temporarily commented out
             if (parcel == null)
             {
                 Debug.WriteLine("Cannot send SMS for null parcel");
@@ -539,6 +558,7 @@ namespace wms_android.shared.Services
             }
             
             return result;
+            */ // End of commented out templated SMS functionality
         }
         
         /// <summary>
@@ -548,6 +568,11 @@ namespace wms_android.shared.Services
         /// <returns>True if message was sent successfully, false otherwise</returns>
         public async Task<bool> SendParcelDeliveryConfirmationAsync(Parcel parcel)
         {
+            // TODO: SMS functionality temporarily disabled - no sender ID for NID Logistics
+            Debug.WriteLine("SMS disabled: Delivery confirmation not sent (no sender ID configured)");
+            return await Task.FromResult(false);
+            
+            /* SMS functionality temporarily commented out
             if (parcel == null)
             {
                 Debug.WriteLine("Cannot send delivery confirmation for null parcel");
@@ -584,6 +609,7 @@ namespace wms_android.shared.Services
             }
             
             return result;
+            */ // End of commented out delivery confirmation functionality
         }
     }
 } 
