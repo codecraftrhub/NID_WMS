@@ -9,11 +9,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
 WORKDIR /src
 
 # Copy project files first for better layer caching
-# Build context is at the repo root (WMS_Android), so paths are relative to that
+# Build context is now at wms_android.api folder
 RUN echo "=== Starting build process ===" && \
     echo "Working directory: $(pwd)"
-COPY ["wms_android.api/wms_android.api.csproj", "wms_android.api/"]
-COPY ["wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
+COPY ["wms_android.api.csproj", "wms_android.api/"]
+COPY ["../wms_android.shared/wms_android.shared.csproj", "wms_android.shared/"]
 RUN echo "=== Project files copied ===" && \
     ls -la /src/wms_android.api/ && \
     ls -la /src/wms_android.shared/
@@ -33,8 +33,8 @@ RUN echo "=== Restoring NuGet packages ===" && \
 WORKDIR /src
 RUN echo "=== Copying source files ===" && \
     echo "Files before copy:" && ls -la /src || echo "Source directory listing failed"
-COPY ["wms_android.api/", "wms_android.api/"]
-COPY ["wms_android.shared/", "wms_android.shared/"]
+COPY [".", "wms_android.api/"]
+COPY ["../wms_android.shared/", "wms_android.shared/"]
 RUN echo "=== Files after copy ===" && \
     ls -la /src && \
     echo "=== API project files ===" && \
