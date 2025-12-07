@@ -2,7 +2,7 @@
   "name": "nid-logistics-dispatch-client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://wmsandroidapi-w74du.ondigitalocean.app",
+  "proxy": "https://plankton-app-d86df.ondigitalocean.app",
   "dependencies": {
     "@types/jspdf": "^1.3.3",
     "@types/node": "^16.18.0",

@@ -20,8 +20,8 @@ const getApiBaseUrl = (): string => {
   }
 
   // Important: production API is under /api path
-  // return 'https://wmsandroidapi-w74du.ondigitalocean.app/api';  // Production URL - commented out
-  return 'http://localhost:5000/api';  // Development URL
+  return 'https://plankton-app-d86df.ondigitalocean.app/api';  // Production URL
+  // return 'http://localhost:5000/api';  // Development URL - commented out
 };
 
 /**
