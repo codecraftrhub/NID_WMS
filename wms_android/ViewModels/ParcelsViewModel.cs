@@ -975,6 +975,11 @@ NB:
 4. Cash not accepted as courier, 
    company not liable.
 
+PAYMENT INFO:
+Paybill: 522533
+Account: 1329713648
+Mpesa Till: 4214115
+
 ";
         }
 
@@ -1097,6 +1102,11 @@ NB:
 4. Cash not accepted as courier, 
    company not liable.
 
+PAYMENT INFO:
+Paybill: 522533
+Account: 1329713648
+Mpesa Till: 4214115
+
 ";
             return content;
         }
@@ -1202,6 +1212,11 @@ NB:
 3. Mirrors/boards carried at owner's risk.
 4. Cash not accepted as courier, 
    company not liable.
+
+PAYMENT INFO:
+Paybill: 522533
+Account: 1329713648
+Mpesa Till: 4214115
 
 ";
         }

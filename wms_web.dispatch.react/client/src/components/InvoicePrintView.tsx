@@ -246,9 +246,8 @@ export const InvoicePrintView: React.FC<InvoicePrintViewProps> = ({ invoice }) =
             <h4 className="font-semibold mb-2">Payment Instructions:</h4>
             <div className="space-y-1">
               <div>• Payment is due within {invoice.customer?.paymentTerms || 'Net 30'}</div>
-              <div>• Please include invoice number in payment reference</div>
-              <div>• Use Paybill 522533 for all payments</div>
-              <div>• Contact us for payment queries</div>
+              <div>• Paybill: 522533, Account: 1329713648</div>
+              <div>• Mpesa Till: 4214115</div>
             </div>
           </div>
         </div>
@@ -548,9 +547,8 @@ const generateInvoiceHTML = (invoice: Invoice) => {
             <h4 style="margin-bottom: 10px; font-weight: 600;">Payment Instructions:</h4>
             <div style="line-height: 1.6; font-size: 14px;">
               <div>• Payment is due within ${invoice.customer?.paymentTerms || 'Net 30'}</div>
-              <div>• Please include invoice number in payment reference</div>
-              <div>• Use Paybill 522533 for all payments</div>
-              <div>• Contact us for payment queries</div>
+              <div>• Paybill: 522533, Account: 1329713648</div>
+              <div>• Mpesa Till: 4214115</div>
             </div>
           </div>
         </div>

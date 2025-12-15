@@ -371,6 +371,17 @@ namespace wms_android.ViewModels
             sb.AppendLine("4. Cash is not accepted as courier,");
             sb.AppendLine("   and company will not be liable.");
             sb.AppendLine();
+            sb.AppendLine("PAYMENT INFO:");
+            sb.AppendLine("Paybill: 522533");
+            sb.AppendLine("Account: 1329713648");
+            sb.AppendLine("Mpesa Till: 4214115");
+            sb.AppendLine();
+            sb.AppendLine("RECIPIENT CONFIRMATION:");
+            sb.AppendLine();
+            sb.AppendLine("Signature: _________________");
+            sb.AppendLine();
+            sb.AppendLine("ID Number: _________________");
+            sb.AppendLine();
             
             return sb.ToString();
         }
