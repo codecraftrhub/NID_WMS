@@ -751,12 +751,18 @@ class WMSApiService {
         url = `${API_BASE_URL}/Dispatches/branch/${encodeURIComponent(branchName)}`;
       }
       
+      console.log('getDispatches API call:', { branchName, url });
+      
       const response = await fetch(url, {
         headers: this.getHeaders(),
       });
 
+      console.log('getDispatches API response:', { status: response.status, ok: response.ok });
+
       if (!response.ok) {
-        throw new Error(`Failed to fetch dispatches: ${response.status}`);
+        const errorText = await response.text();
+        console.error('getDispatches API error:', errorText);
+        throw new Error(`Failed to fetch dispatches: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();

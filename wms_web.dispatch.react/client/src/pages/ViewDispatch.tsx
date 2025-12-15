@@ -73,7 +73,17 @@ const ViewDispatch: React.FC = () => {
       setError('');
       
       // Determine if we should filter by branch
-      const branchName = isBranchManager() && user?.branch?.name ? user.branch.name : undefined;
+      const isManager = isBranchManager();
+      const branchName = isManager && user?.branch?.name ? user.branch.name : undefined;
+      
+      console.log('ViewDispatch: User role check:', {
+        user,
+        isManager,
+        branchName,
+        userRole: user?.role,
+        userRoleId: user?.roleId,
+        userBranch: user?.branch
+      });
       
       const data = await wmsApi.getDispatches(branchName);
       
