@@ -135,7 +135,7 @@ namespace wms_android.ViewModels
 
             foreach (var parcel in DisplayParcels)
             {
-                StatusMessage = $"Processing parcel: {parcel.WaybillNumber} / {parcel.Description?.Substring(0, Math.Min(parcel.Description.Length, 10))}...";
+                StatusMessage = $"Processing parcel: {parcel.WaybillNumber} / {parcel.Description?.Substring(0, Math.Min(parcel.Description.Length, 10))}... (Printing 2 copies)";
                 bool currentParcelPrintSuccess = false;
                 bool currentParcelDeliverySuccess = false;
 
@@ -155,12 +155,28 @@ namespace wms_android.ViewModels
                     // Build delivery receipt content
                     var receiptContent = BuildDeliveryReceiptContent(parcel);
                     
-                    // Print the delivery receipt
-                    var printResult = await _printerService.PrintTextAsync(receiptContent);
+                    // Print the delivery receipt twice with 1-second pause
+                    var firstPrintResult = await _printerService.PrintTextAsync(receiptContent);
                     
-                    if (printResult)
+                    if (firstPrintResult)
                     {
-                        Debug.WriteLine($"Delivery confirmation receipt printed successfully for {parcel.WaybillNumber}.");
+                        Debug.WriteLine($"First delivery receipt printed successfully for {parcel.WaybillNumber}.");
+                        
+                        // Wait 1 second before printing the second copy
+                        await Task.Delay(1000);
+                        
+                        // Print the second copy
+                        var secondPrintResult = await _printerService.PrintTextAsync(receiptContent);
+                        
+                        if (secondPrintResult)
+                        {
+                            Debug.WriteLine($"Second delivery receipt printed successfully for {parcel.WaybillNumber}.");
+                        }
+                        else
+                        {
+                            Debug.WriteLine($"Second delivery receipt print failed for {parcel.WaybillNumber}, but first print succeeded.");
+                        }
+                        
                         currentParcelPrintSuccess = true;
                         successfulPrints.Add(parcel.WaybillNumber ?? parcel.Id.ToString());
 
@@ -223,8 +239,8 @@ namespace wms_android.ViewModels
                     }
                     else
                     {
-                        Debug.WriteLine($"Failed to print delivery receipt for {parcel.WaybillNumber}.");
-                        failedPrints.Add($"{parcel.WaybillNumber ?? parcel.Id.ToString()} (Print failed)");
+                        Debug.WriteLine($"Failed to print first delivery receipt for {parcel.WaybillNumber}.");
+                        failedPrints.Add($"{parcel.WaybillNumber ?? parcel.Id.ToString()} (First print failed)");
                     }
                 }
                 catch (Exception ex)

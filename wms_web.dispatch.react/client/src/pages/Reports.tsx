@@ -1784,9 +1784,9 @@ const Reports: React.FC = () => {
                     <td>${new Date(transaction.date).toLocaleDateString()}</td>
                     <td class="amount">KSh ${transaction.codTotal.toLocaleString()}</td>
                     <td class="amount">KSh ${transaction.depositedAmount.toLocaleString()}</td>
-                    <td class="amount ${transaction.debt > 0 ? 'debt-positive' : 'debt-negative'}">
-                      KSh ${Math.abs(transaction.debt).toLocaleString()}
-                      ${transaction.debt < 0 ? ' (Credit)' : ''}
+                    <td class="amount ${(transaction.codTotal - transaction.depositedAmount) > 0 ? 'debt-positive' : 'debt-negative'}">
+                      KSh ${Math.abs(transaction.codTotal - transaction.depositedAmount).toLocaleString()}
+                      ${(transaction.codTotal - transaction.depositedAmount) < 0 ? ' (Credit)' : ''}
                     </td>
                   </tr>
                 `).join('')}
@@ -3196,10 +3196,16 @@ const Reports: React.FC = () => {
                             </div>
                           </Table.Cell>
                           <Table.Cell>
-                            <Badge variant={transaction.debt > 0 ? 'error' : 'success'}>
-                              {formatCurrency(Math.abs(transaction.debt))}
-                              {transaction.debt < 0 && ' (Credit)'}
-                            </Badge>
+                            {(() => {
+                              // Calculate actual daily debt: COD Total - Deposited Amount for this day only
+                              const dailyDebt = transaction.codTotal - transaction.depositedAmount;
+                              return (
+                                <Badge variant={dailyDebt > 0 ? 'error' : 'success'}>
+                                  {formatCurrency(Math.abs(dailyDebt))}
+                                  {dailyDebt < 0 && ' (Credit)'}
+                                </Badge>
+                              );
+                            })()}
                           </Table.Cell>
                           <Table.Cell>
                             <Button

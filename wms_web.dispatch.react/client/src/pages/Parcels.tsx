@@ -12,10 +12,10 @@ interface ParcelFilterState {
   status: string;
   destination: string;
   paymentMethod: string;
-  amountRange: { from: string; to: string };
   dateRange: { from: string; to: string };
   sender: string;
   receiver: string;
+  clerk: string;
 }
 
 const Parcels: React.FC = () => {
@@ -26,6 +26,8 @@ const Parcels: React.FC = () => {
   const [selectedParcel, setSelectedParcel] = useState<Parcel | null>(null);
   const [showParcelModal, setShowParcelModal] = useState(false);
   const [destinations, setDestinations] = useState<string[]>([]);
+  const [clerks, setClerks] = useState<string[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
 
   const [filters, setFilters] = useState<ParcelFilterState>({
@@ -33,10 +35,10 @@ const Parcels: React.FC = () => {
     status: '',
     destination: '',
     paymentMethod: '',
-    amountRange: { from: '', to: '' },
     dateRange: { from: '', to: '' },
     sender: '',
-    receiver: ''
+    receiver: '',
+    clerk: ''
   });
 
   const { user, isAdmin, isBranchManager } = useAuth();
@@ -499,17 +501,47 @@ const Parcels: React.FC = () => {
           return parcel;
         });
 
-        setParcels(updatedParcels);
+        // Sort parcels by creation date, latest first
+        const sortedParcels = updatedParcels.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+
+        setParcels(sortedParcels);
 
         // Extract unique destinations for filter dropdown
         const destinationSet = new Set(updatedParcels.map(p => p.destination).filter(Boolean));
         setDestinations(Array.from(destinationSet).sort());
+
+        // Extract unique clerk names for filter dropdown
+        const clerkSet = new Set(updatedParcels.map(p => p.createdBy?.username).filter(Boolean));
+        setClerks(Array.from(clerkSet).sort());
+
+        // Extract unique payment methods for filter dropdown
+        const paymentMethodSet = new Set(updatedParcels.map(p => p.paymentMethods).filter(Boolean));
+        setPaymentMethods(Array.from(paymentMethodSet).sort());
       } catch (userErr) {
-        setParcels(data);
+        // Sort parcels by creation date, latest first
+        const sortedParcels = data.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+
+        setParcels(sortedParcels);
 
         // Extract unique destinations even if user mapping fails
         const destinationSet = new Set(data.map(p => p.destination).filter(Boolean));
         setDestinations(Array.from(destinationSet).sort());
+
+        // Extract unique clerk names even if user mapping fails
+        const clerkSet = new Set(data.map(p => p.createdBy?.username).filter(Boolean));
+        setClerks(Array.from(clerkSet).sort());
+
+        // Extract unique payment methods even if user mapping fails
+        const paymentMethodSet = new Set(data.map(p => p.paymentMethods).filter(Boolean));
+        setPaymentMethods(Array.from(paymentMethodSet).sort());
       }
     } catch (err) {
       setError('Failed to load parcels');
@@ -541,10 +573,10 @@ const Parcels: React.FC = () => {
       status: '',
       destination: '',
       paymentMethod: '',
-      amountRange: { from: '', to: '' },
       dateRange: { from: '', to: '' },
       sender: '',
-      receiver: ''
+      receiver: '',
+      clerk: ''
     });
   };
 
@@ -595,16 +627,6 @@ const Parcels: React.FC = () => {
       });
     }
 
-    if (filters.amountRange.from || filters.amountRange.to) {
-      const rangeValue = `${filters.amountRange.from || '0'} - ${filters.amountRange.to || '∞'}`;
-      chips.push({
-        key: 'amountRange',
-        label: 'Amount Range',
-        value: rangeValue,
-        onRemove: () => handleFilterChange('amountRange', { from: '', to: '' })
-      });
-    }
-
     if (filters.dateRange.from || filters.dateRange.to) {
       const rangeValue = `${filters.dateRange.from || 'Start'} to ${filters.dateRange.to || 'End'}`;
       chips.push({
@@ -630,6 +652,15 @@ const Parcels: React.FC = () => {
         label: 'Receiver',
         value: filters.receiver,
         onRemove: () => handleFilterChange('receiver', '')
+      });
+    }
+
+    if (filters.clerk) {
+      chips.push({
+        key: 'clerk',
+        label: 'Clerk',
+        value: filters.clerk,
+        onRemove: () => handleFilterChange('clerk', '')
       });
     }
 
@@ -673,16 +704,13 @@ const Parcels: React.FC = () => {
     {
       key: 'paymentMethod',
       label: 'Payment Method',
-      type: 'text',
-      placeholder: 'Filter by payment method',
-      icon: <DollarSign className="w-4 h-4" />
-    },
-    {
-      key: 'amountRange',
-      label: 'Amount Range',
-      type: 'numberRange',
-      placeholder: 'Enter amount range',
-      icon: <DollarSign className="w-4 h-4" />
+      type: 'select',
+      placeholder: 'Select payment method',
+      icon: <DollarSign className="w-4 h-4" />,
+      options: [
+        { value: '', label: 'All Payment Methods' },
+        ...(paymentMethods || []).map(method => ({ value: method, label: method }))
+      ]
     },
     {
       key: 'dateRange',
@@ -704,8 +732,19 @@ const Parcels: React.FC = () => {
       type: 'text',
       placeholder: 'Filter by receiver name',
       icon: <User className="w-4 h-4" />
+    },
+    {
+      key: 'clerk',
+      label: 'Clerk',
+      type: 'select',
+      placeholder: 'Select clerk',
+      icon: <User className="w-4 h-4" />,
+      options: [
+        { value: '', label: 'All Clerks' },
+        ...(clerks || []).map(clerk => ({ value: clerk, label: clerk }))
+      ]
     }
-  ], [destinations]);
+  ], [destinations, clerks, paymentMethods]);
 
   const filteredParcels = parcels.filter(parcel => {
     // Search filter
@@ -724,12 +763,7 @@ const Parcels: React.FC = () => {
 
     // Payment method filter
     const matchesPaymentMethod = !filters.paymentMethod ||
-      parcel.paymentMethods.toLowerCase().includes(filters.paymentMethod.toLowerCase());
-
-    // Amount range filter
-    const matchesAmountRange = (!filters.amountRange.from && !filters.amountRange.to) ||
-      ((filters.amountRange.from ? parcel.totalAmount >= Number(filters.amountRange.from) : true) &&
-        (filters.amountRange.to ? parcel.totalAmount <= Number(filters.amountRange.to) : true));
+      parcel.paymentMethods === filters.paymentMethod;
 
     // Date range filter
     const matchesDateRange = (!filters.dateRange.from && !filters.dateRange.to) ||
@@ -748,8 +782,12 @@ const Parcels: React.FC = () => {
     const matchesReceiver = !filters.receiver ||
       parcel.receiver.toLowerCase().includes(filters.receiver.toLowerCase());
 
+    // Clerk filter
+    const matchesClerk = !filters.clerk ||
+      parcel.createdBy?.username === filters.clerk;
+
     return matchesSearch && matchesStatus && matchesDestination && matchesPaymentMethod &&
-      matchesAmountRange && matchesDateRange && matchesSender && matchesReceiver;
+      matchesDateRange && matchesSender && matchesReceiver && matchesClerk;
   });
 
   // Virtual table columns

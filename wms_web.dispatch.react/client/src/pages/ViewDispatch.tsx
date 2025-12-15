@@ -79,7 +79,15 @@ const ViewDispatch: React.FC = () => {
       
       // Cast to EnhancedDispatch since API service normalizes parcelIds
       const enhancedDispatches = data.map(dispatch => dispatch as EnhancedDispatch);
-      setDispatches(enhancedDispatches);
+      
+      // Sort dispatches by dispatch time, latest first
+      const sortedDispatches = enhancedDispatches.sort((a, b) => {
+        const dateA = new Date(a.dispatchTime || 0);
+        const dateB = new Date(b.dispatchTime || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      setDispatches(sortedDispatches);
     } catch (err) {
       setError('Failed to load dispatches');
     } finally {
@@ -252,7 +260,15 @@ const ViewDispatch: React.FC = () => {
           };
           parcels.push(enhancedParcel);
         }
-        setDispatchParcels(parcels);
+        
+        // Sort parcels by creation date, latest first
+        const sortedParcels = parcels.sort((a, b) => {
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          return dateB.getTime() - dateA.getTime();
+        });
+        
+        setDispatchParcels(sortedParcels);
       } else if (dispatch.parcelIds && dispatch.parcelIds.length > 0) {
         // Use batch fetch for better performance
         try {
@@ -300,7 +316,14 @@ const ViewDispatch: React.FC = () => {
             }
           }
           
-          setDispatchParcels(allParcels);
+          // Sort parcels by creation date, latest first
+          const sortedParcels = allParcels.sort((a, b) => {
+            const dateA = new Date(a.createdAt || 0);
+            const dateB = new Date(b.createdAt || 0);
+            return dateB.getTime() - dateA.getTime();
+          });
+          
+          setDispatchParcels(sortedParcels);
         } catch (err) {
           setDispatchParcels([]);
         }
@@ -841,6 +864,7 @@ const ViewDispatch: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => handlePrintDispatchNote(selectedDispatch)}
+              disabled={loadingParcels}
             >
               <Printer className="w-4 h-4 mr-2" />
               Print Note
@@ -848,6 +872,7 @@ const ViewDispatch: React.FC = () => {
             <Button
               variant="primary"
               onClick={() => handlePrintDispatchNote(selectedDispatch)}
+              disabled={loadingParcels}
             >
               <Download className="w-4 h-4 mr-2" />
               Download PDF
@@ -1129,6 +1154,7 @@ const ViewDispatch: React.FC = () => {
                     size="sm"
                     onClick={() => handlePrintDispatchNote(dispatch)}
                     title="Print Note"
+                    disabled={loading}
                   >
                     <Printer className="w-4 h-4" />
                   </Button>

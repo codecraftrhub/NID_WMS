@@ -119,7 +119,14 @@ const DispatchList: React.FC = () => {
         })
       );
       
-      setDispatches(dispatchesWithTotals);
+      // Sort dispatches by dispatch time, latest first
+      const sortedDispatches = dispatchesWithTotals.sort((a, b) => {
+        const dateA = new Date(a.dispatchTime || 0);
+        const dateB = new Date(b.dispatchTime || 0);
+        return dateB.getTime() - dateA.getTime();
+      });
+      
+      setDispatches(sortedDispatches);
     } catch (err) {
       setError('Failed to load dispatches');
     } finally {
@@ -707,6 +714,7 @@ const DispatchList: React.FC = () => {
             size="sm"
             onClick={() => handlePrintDispatchNote(dispatch)}
             title="Print Dispatch Note"
+            disabled={loading}
           >
             <Printer className="w-4 h-4" />
           </Button>
