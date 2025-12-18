@@ -386,6 +386,8 @@ const FinancialDashboard: React.FC = () => {
         selectedPeriod="both" 
         showCharts={true}
         maxBranches={10}
+        autoRefresh={true}
+        refreshInterval={30000}
       />
     </div>
   );

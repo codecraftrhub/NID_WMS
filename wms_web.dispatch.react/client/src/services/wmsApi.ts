@@ -817,9 +817,10 @@ class WMSApiService {
     dispatchCode: string;
     sourceBranch: string;
     destination: string;
-    driver_name: string;
-    vehicle_registration: string;
-    parcel_ids: string[];
+    driver: string;
+    driverPhone?: string;
+    vehicleNumber: string;
+    parcelIds: string[];
   }): Promise<Dispatch | null> {
     try {
       // Debug: Log input data
@@ -829,9 +830,10 @@ class WMSApiService {
         dispatchCode: dispatchData.dispatchCode,
         sourceBranch: dispatchData.sourceBranch,
         destination: dispatchData.destination,
-        vehicleNumber: dispatchData.vehicle_registration,
-        driver: dispatchData.driver_name,
-        parcelIds: dispatchData.parcel_ids
+        vehicleNumber: dispatchData.vehicleNumber,
+        driver: dispatchData.driver,
+        driverPhone: dispatchData.driverPhone,
+        parcelIds: dispatchData.parcelIds
       };
 
       // Debug: Log the request payload being sent to API
@@ -1734,11 +1736,25 @@ class WMSApiService {
 
       return branches.map(branch => {
         // Get parcels that are being sent TO this branch (destination-based)
-        // Match parcels where the destination matches the branch name
+        // Improved matching logic for branch names and destinations
         const branchParcels = filteredParcels.filter(parcel => {
-          // Check if parcel destination matches branch name (case-insensitive)
-          return parcel.destination && 
-                 parcel.destination.toLowerCase().includes(branch.name.toLowerCase());
+          if (!parcel.destination || !branch.name) return false;
+          
+          const destination = parcel.destination.toLowerCase().trim();
+          const branchName = branch.name.toLowerCase().trim();
+          
+          // Extract key location words from branch name (remove common words like 'branch', 'office', etc.)
+          const branchLocation = branchName
+            .replace(/\b(branch|office|depot|warehouse|hub|center|centre)\b/g, '')
+            .trim();
+          
+          // Check multiple matching criteria:
+          // 1. Exact destination match with branch location
+          // 2. Destination contains branch location
+          // 3. Branch location contains destination (for shorter destination names)
+          return destination === branchLocation ||
+                 destination.includes(branchLocation) ||
+                 (destination.length >= 3 && branchLocation.includes(destination));
         });
 
         const totalSales = branchParcels.reduce((sum, parcel) => sum + (parcel.totalAmount || 0), 0);

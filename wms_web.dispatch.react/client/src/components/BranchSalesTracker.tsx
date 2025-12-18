@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Building2, Calendar, TrendingUp, BarChart3 } from 'lucide-react';
+import { Building2, Calendar, TrendingUp, BarChart3, RefreshCw } from 'lucide-react';
 import { Card } from './ui';
 import Chart from 'react-apexcharts';
 import { wmsApi } from '../services/wmsApi';
@@ -19,26 +19,40 @@ interface BranchSalesTrackerProps {
   selectedPeriod?: 'daily' | 'monthly' | 'both';
   showCharts?: boolean;
   maxBranches?: number;
+  autoRefresh?: boolean;
+  refreshInterval?: number; // in milliseconds
 }
 
 const BranchSalesTracker: React.FC<BranchSalesTrackerProps> = ({ 
   selectedPeriod = 'both',
   showCharts = true,
-  maxBranches = 10
+  maxBranches = 10,
+  autoRefresh = true,
+  refreshInterval = 30000 // Default: 30 seconds
 }) => {
   const [branchSalesData, setBranchSalesData] = useState<BranchSalesData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<'table' | 'chart'>('table');
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const loadBranchSalesData = useCallback(async () => {
+  const loadBranchSalesData = useCallback(async (isRefresh = false) => {
     try {
-      setIsLoading(true);
+      if (isRefresh) {
+        setIsRefreshing(true);
+      } else {
+        setIsLoading(true);
+      }
+      
+      console.log('Loading branch sales data...', { isRefresh });
       
       // Use the new optimized API methods
       const [dailySales, monthlySales] = await Promise.all([
         wmsApi.getDailySalesByBranch(),
         wmsApi.getMonthlySalesByBranch()
       ]);
+
+      console.log('Branch sales data loaded:', { dailySales, monthlySales });
 
       // Combine daily and monthly data
       const branchSales: BranchSalesData[] = monthlySales.map(monthlyBranch => {
@@ -67,16 +81,35 @@ const BranchSalesTracker: React.FC<BranchSalesTrackerProps> = ({
         .slice(0, maxBranches);
 
       setBranchSalesData(sortedBranchSales);
+      setLastRefresh(new Date());
+      
+      console.log('Branch sales data processed:', sortedBranchSales);
     } catch (error) {
       console.error('Failed to load branch sales data:', error);
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, [maxBranches]);
 
   useEffect(() => {
-    loadBranchSalesData();
+    loadBranchSalesData(false);
   }, [loadBranchSalesData]);
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      loadBranchSalesData(true);
+    }, refreshInterval);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, refreshInterval, loadBranchSalesData]);
+
+  const handleManualRefresh = () => {
+    loadBranchSalesData(true);
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-KE', {
@@ -175,33 +208,53 @@ const BranchSalesTracker: React.FC<BranchSalesTrackerProps> = ({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h2 className="text-xl font-bold text-gray-900">Branch Sales Performance</h2>
-          <p className="text-gray-600 text-sm">Sales from parcels sent TO each branch (destination-based)</p>
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <span>Sales from parcels sent TO each branch (destination-based)</span>
+            {lastRefresh && (
+              <span>• Last updated: {lastRefresh.toLocaleTimeString()}</span>
+            )}
+          </div>
         </div>
         
-        {showCharts && (
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-2 text-sm font-medium rounded-md ${
-                viewMode === 'table'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Table View
-            </button>
-            <button
-              onClick={() => setViewMode('chart')}
-              className={`px-3 py-2 text-sm font-medium rounded-md ${
-                viewMode === 'chart'
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Chart View
-            </button>
-          </div>
-        )}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            className={`px-3 py-2 text-sm font-medium rounded-md flex items-center space-x-1 ${
+              isRefreshing
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            }`}
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
+          
+          {showCharts && (
+            <div className="flex space-x-1">
+              <button
+                onClick={() => setViewMode('table')}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  viewMode === 'table'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Table View
+              </button>
+              <button
+                onClick={() => setViewMode('chart')}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  viewMode === 'chart'
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Chart View
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {viewMode === 'table' ? (
