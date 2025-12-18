@@ -11,6 +11,7 @@ namespace wms_android.shared.Models
         public string? Destination { get; set; } // Make destination nullable for backward compatibility
         public string VehicleNumber { get; set; } = string.Empty;
         public string Driver { get; set; } = string.Empty;
+        public string? DriverPhone { get; set; } = string.Empty;
         public List<Guid> ParcelIds { get; set; } = new();
         public DateTime DispatchTime { get; set; }
         public string Status { get; set; } = string.Empty;

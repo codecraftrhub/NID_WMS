@@ -3,6 +3,7 @@ import {
   Truck, 
   Package, 
   User, 
+  Phone,
   MapPin, 
   CheckCircle, 
   AlertCircle, 
@@ -22,6 +23,7 @@ interface CreateDispatchFormData {
   sourceBranch: string;
   destination: string;
   driverName: string;
+  driverPhone: string;
   vehicleNumber: string;
   parcelIds: string[];
 }
@@ -62,6 +64,7 @@ const CreateDispatch: React.FC = () => {
     sourceBranch: user?.branch?.name || 'Unknown Branch',
     destination: '',
     driverName: '',
+    driverPhone: '',
     vehicleNumber: '',
     parcelIds: []
   });
@@ -391,7 +394,7 @@ const CreateDispatch: React.FC = () => {
       return;
     }
 
-    if (!formData.destination || !formData.driverName || !formData.vehicleNumber) {
+    if (!formData.destination || !formData.driverName || !formData.driverPhone || !formData.vehicleNumber) {
       setError('Please fill in all required fields');
       return;
     }
@@ -414,6 +417,7 @@ const CreateDispatch: React.FC = () => {
         sourceBranch: formData.sourceBranch,
         destination: formData.destination,
         driver_name: formData.driverName,
+        driver_phone: formData.driverPhone,
         vehicle_registration: formData.vehicleNumber,
         parcel_ids: selectedParcelIds
       };
@@ -440,6 +444,7 @@ const CreateDispatch: React.FC = () => {
           sourceBranch: user?.branch?.name || 'Unknown Branch',
           destination: '',
           driverName: '',
+          driverPhone: '',
           vehicleNumber: '',
           parcelIds: []
         });
@@ -711,6 +716,17 @@ const CreateDispatch: React.FC = () => {
                   onChange={(e) => handleFormChange('driverName', e.target.value)}
                   icon={<User className="w-4 h-4" />}
                   required
+                />
+
+                <Input
+                  label="Driver Phone Number *"
+                  placeholder="e.g., 0712345678 or 254712345678"
+                  value={formData.driverPhone}
+                  onChange={(e) => handleFormChange('driverPhone', e.target.value)}
+                  icon={<Phone className="w-4 h-4" />}
+                  type="tel"
+                  required
+                  helperText="Kenyan mobile number format"
                 />
 
                 <Input

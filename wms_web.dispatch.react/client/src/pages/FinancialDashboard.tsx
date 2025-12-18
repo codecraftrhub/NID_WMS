@@ -17,6 +17,7 @@ import { Card, Button } from '../components/ui';
 import Chart from 'react-apexcharts';
 import { wmsApi, Invoice, ContractCustomer } from '../services/wmsApi';
 import { useAuth } from '../context/AuthContext';
+import BranchSalesTracker from '../components/BranchSalesTracker';
 
 interface FinancialSummary {
   totalRevenue: number;
@@ -379,6 +380,13 @@ const FinancialDashboard: React.FC = () => {
           </div>
         </Card>
       </div>
+
+      {/* Branch Sales Tracker */}
+      <BranchSalesTracker 
+        selectedPeriod="both" 
+        showCharts={true}
+        maxBranches={10}
+      />
     </div>
   );
 };

@@ -11,7 +11,8 @@ import {
   ChevronDown,
   ShieldCheck,
   Building2,
-  DollarSign
+  DollarSign,
+  MessageSquare
 } from "lucide-react";
 import { useSidebar } from "../context/SidebarContext";
 import { useAuth } from "../context/AuthContext";
@@ -64,6 +65,11 @@ const AppSidebar: React.FC = () => {
         icon: <BarChart3 className="w-6 h-6" />,
         name: "Reports",
         path: "/reports",
+      },
+      {
+        icon: <MessageSquare className="w-6 h-6" />,
+        name: "SMS Messaging",
+        path: "/sms-messaging",
       },
       {
         icon: <DollarSign className="w-6 h-6" />,

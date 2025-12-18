@@ -80,6 +80,7 @@ namespace wms_android.api.Controllers
                     Destination = dispatch.EffectiveDestination, // Use EffectiveDestination for backward compatibility
                     VehicleNumber = dispatch.VehicleNumber,
                     Driver = dispatch.Driver,
+                    DriverPhone = dispatch.DriverPhone,
                     ParcelIds = dispatch.ParcelIds,
                     DispatchTime = dispatch.DispatchTime,
                     Status = dispatch.Status,
@@ -172,6 +173,7 @@ namespace wms_android.api.Controllers
                 SourceBranch = dispatch.SourceBranch,
                 VehicleNumber = dispatch.VehicleNumber,
                 Driver = dispatch.Driver,
+                DriverPhone = dispatch.DriverPhone,
                 DispatchTime = dispatch.DispatchTime,
                 Parcels = dispatch.Parcels
             };
@@ -203,6 +205,7 @@ namespace wms_android.api.Controllers
         public string SourceBranch { get; set; }
         public string VehicleNumber { get; set; }
         public string Driver { get; set; }
+        public string? DriverPhone { get; set; }
         public DateTime DispatchTime { get; set; }
         public List<Parcel> Parcels { get; set; }
     }
@@ -213,6 +216,7 @@ namespace wms_android.api.Controllers
         public string? SourceBranch { get; set; }
         public string? VehicleNumber { get; set; }
         public string? Driver { get; set; }
+        public string? DriverPhone { get; set; }
         public string? Destination { get; set; }
         public List<Guid>? Parcels { get; set; }
     }

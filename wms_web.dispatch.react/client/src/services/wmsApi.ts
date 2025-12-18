@@ -46,6 +46,7 @@ export interface Dispatch {
   sourceBranch: string;
   vehicleNumber: string;
   driver: string;
+  driverPhone?: string;
   status: string;
   totalParcels?: number;
   totalAmount?: number;
@@ -59,6 +60,7 @@ export interface CreateDispatchRequest {
   destination: string;
   vehicleNumber: string;
   driver: string;
+  driverPhone?: string;
   parcelIds: string[];
 }
 
@@ -1701,6 +1703,99 @@ class WMSApiService {
     // If user has a branch (branch manager), filter by branch
     // If user is admin, get all data
     return await fetchFunction(userBranch);
+  }
+
+  // Branch Sales Analytics Methods
+  async getBranchSalesData(startDate?: string, endDate?: string): Promise<{
+    branchId: number;
+    branchName: string;
+    totalSales: number;
+    totalParcels: number;
+    avgSaleValue: number;
+  }[]> {
+    try {
+      const [branches, parcels] = await Promise.all([
+        this.getBranches(),
+        this.getParcels()
+      ]);
+
+      // Filter parcels by date range if provided
+      const filteredParcels = parcels.filter(parcel => {
+        if (!parcel.createdAt) return false;
+        
+        if (startDate && endDate) {
+          const parcelDate = new Date(parcel.createdAt);
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          return parcelDate >= start && parcelDate <= end;
+        }
+        return true;
+      });
+
+      return branches.map(branch => {
+        // Get parcels that are being sent TO this branch (destination-based)
+        // Match parcels where the destination matches the branch name
+        const branchParcels = filteredParcels.filter(parcel => {
+          // Check if parcel destination matches branch name (case-insensitive)
+          return parcel.destination && 
+                 parcel.destination.toLowerCase().includes(branch.name.toLowerCase());
+        });
+
+        const totalSales = branchParcels.reduce((sum, parcel) => sum + (parcel.totalAmount || 0), 0);
+        const totalParcels = branchParcels.length;
+
+        return {
+          branchId: branch.id,
+          branchName: branch.name,
+          totalSales,
+          totalParcels,
+          avgSaleValue: totalParcels > 0 ? totalSales / totalParcels : 0
+        };
+      });
+    } catch (error) {
+      console.error('Error getting branch sales data:', error);
+      throw error;
+    }
+  }
+
+  async getDailySalesByBranch(date?: string): Promise<{
+    branchId: number;
+    branchName: string;
+    dailySales: number;
+    dailyParcels: number;
+  }[]> {
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    const salesData = await this.getBranchSalesData(targetDate, targetDate);
+    
+    return salesData.map(branch => ({
+      branchId: branch.branchId,
+      branchName: branch.branchName,
+      dailySales: branch.totalSales,
+      dailyParcels: branch.totalParcels
+    }));
+  }
+
+  async getMonthlySalesByBranch(year?: number, month?: number): Promise<{
+    branchId: number;
+    branchName: string;
+    monthlySales: number;
+    monthlyParcels: number;
+  }[]> {
+    const now = new Date();
+    const targetYear = year || now.getFullYear();
+    const targetMonth = month || now.getMonth();
+
+    const startDate = new Date(targetYear, targetMonth, 1).toISOString().split('T')[0];
+    const endDate = new Date(targetYear, targetMonth + 1, 0).toISOString().split('T')[0];
+
+    const salesData = await this.getBranchSalesData(startDate, endDate);
+    
+    return salesData.map(branch => ({
+      branchId: branch.branchId,
+      branchName: branch.branchName,
+      monthlySales: branch.totalSales,
+      monthlyParcels: branch.totalParcels
+    }));
   }
 
   // Branch Deposits API methods

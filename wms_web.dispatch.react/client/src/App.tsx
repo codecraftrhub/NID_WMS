@@ -5,6 +5,7 @@ import { SidebarProvider } from './context/SidebarContext';
 import { useAuth } from './context/AuthContext';
 import AppHeader from './layout/AppHeader';
 import AppSidebar from './layout/AppSidebar';
+import SessionManager from './components/SessionManager';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Parcels from './pages/Parcels';
@@ -18,6 +19,7 @@ import FinancialDashboard from './pages/FinancialDashboard';
 import PaymentsManagement from './pages/PaymentsManagement';
 import ExpensesManagement from './pages/ExpensesManagement';
 import Reports from './pages/Reports';
+import SMSMessaging from './pages/SMSMessaging';
 import UserManagement from './pages/UserManagement';
 import AdminParcelManagement from './pages/AdminParcelManagement';
 import NotFound from './pages/NotFound';
@@ -77,8 +79,9 @@ const ModernLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <Routes>
+      <SessionManager>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <Routes>
           {/* Login page without layout */}
           <Route path="/login" element={<Login />} />
           
@@ -204,6 +207,16 @@ const App: React.FC = () => {
             }
           />
           <Route
+            path="/sms-messaging"
+            element={
+              <ProtectedRoute>
+                <ModernLayout>
+                  <SMSMessaging />
+                </ModernLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/user-management"
             element={
               <ProtectedRoute>
@@ -235,8 +248,9 @@ const App: React.FC = () => {
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </SessionManager>
     </AuthProvider>
   );
 };

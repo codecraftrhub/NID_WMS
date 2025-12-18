@@ -510,7 +510,7 @@ const ViewDispatch: React.FC = () => {
                   </div>
                   <div class="info-item">
                     <span class="info-label">Driver:</span>
-                    <span class="info-value">${dispatch.driver}</span>
+                    <span class="info-value">${dispatch.driver}${dispatch.driverPhone ? `<br>Tel: ${dispatch.driverPhone}` : ''}</span>
                   </div>
                 </div>
 
